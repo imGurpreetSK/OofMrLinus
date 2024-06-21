@@ -38,16 +38,16 @@ import com.gurpreetsk.oofmrlinus.data.MuseumObject
 import com.gurpreetsk.oofmrlinus.screens.EmptyScreenContent
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
-import kmp_app_template.composeapp.generated.resources.Res
-import kmp_app_template.composeapp.generated.resources.back
-import kmp_app_template.composeapp.generated.resources.label_artist
-import kmp_app_template.composeapp.generated.resources.label_credits
-import kmp_app_template.composeapp.generated.resources.label_date
-import kmp_app_template.composeapp.generated.resources.label_department
-import kmp_app_template.composeapp.generated.resources.label_dimensions
-import kmp_app_template.composeapp.generated.resources.label_medium
-import kmp_app_template.composeapp.generated.resources.label_repository
-import kmp_app_template.composeapp.generated.resources.label_title
+import oofmrlinus.shared.generated.resources.Res
+import oofmrlinus.shared.generated.resources.back
+import oofmrlinus.shared.generated.resources.label_artist
+import oofmrlinus.shared.generated.resources.label_credits
+import oofmrlinus.shared.generated.resources.label_date
+import oofmrlinus.shared.generated.resources.label_department
+import oofmrlinus.shared.generated.resources.label_dimensions
+import oofmrlinus.shared.generated.resources.label_medium
+import oofmrlinus.shared.generated.resources.label_repository
+import oofmrlinus.shared.generated.resources.label_title
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
