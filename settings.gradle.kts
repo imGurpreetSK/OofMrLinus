@@ -1,4 +1,4 @@
-rootProject.name = "KMP-App-Template"
+rootProject.name = "OofMrLinus"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
@@ -28,4 +28,4 @@ dependencyResolutionManagement {
     }
 }
 
-include(":composeApp")
+include(":shared")
