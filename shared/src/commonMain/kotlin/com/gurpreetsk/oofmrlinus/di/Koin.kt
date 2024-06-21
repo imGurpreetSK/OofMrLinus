@@ -1,12 +1,12 @@
-package com.jetbrains.kmpapp.di
+package com.gurpreetsk.oofmrlinus.di
 
-import com.jetbrains.kmpapp.data.InMemoryMuseumStorage
-import com.jetbrains.kmpapp.data.KtorMuseumApi
-import com.jetbrains.kmpapp.data.MuseumApi
-import com.jetbrains.kmpapp.data.MuseumRepository
-import com.jetbrains.kmpapp.data.MuseumStorage
-import com.jetbrains.kmpapp.screens.detail.DetailScreenModel
-import com.jetbrains.kmpapp.screens.list.ListScreenModel
+import com.gurpreetsk.oofmrlinus.data.InMemoryMuseumStorage
+import com.gurpreetsk.oofmrlinus.data.KtorMuseumApi
+import com.gurpreetsk.oofmrlinus.data.MuseumApi
+import com.gurpreetsk.oofmrlinus.data.MuseumRepository
+import com.gurpreetsk.oofmrlinus.data.MuseumStorage
+import com.gurpreetsk.oofmrlinus.screens.detail.DetailScreenModel
+import com.gurpreetsk.oofmrlinus.screens.list.ListScreenModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.http.ContentType

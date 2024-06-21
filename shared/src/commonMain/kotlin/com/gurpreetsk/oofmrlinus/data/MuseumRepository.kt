@@ -1,4 +1,4 @@
-package com.jetbrains.kmpapp.data
+package com.gurpreetsk.oofmrlinus.data
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob

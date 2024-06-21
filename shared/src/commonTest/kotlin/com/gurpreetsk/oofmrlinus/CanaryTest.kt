@@ -1,4 +1,4 @@
-package com.jetbrains.kmpapp
+package com.gurpreetsk.oofmrlinus
 
 import kotlin.test.Test
 import kotlin.test.assertTrue

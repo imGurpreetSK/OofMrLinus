@@ -1,4 +1,4 @@
-package com.jetbrains.kmpapp
+package com.gurpreetsk.oofmrlinus
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
