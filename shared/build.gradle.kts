@@ -34,9 +34,11 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
         }
+
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
         }
+
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -53,7 +55,10 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.voyager.navigator)
             implementation(libs.voyager.koin)
+
+            implementation(libs.logging)
         }
+
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)

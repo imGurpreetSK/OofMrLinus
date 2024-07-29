@@ -1,5 +1,6 @@
 package com.gurpreetsk.oofmrlinus.home.repository.internal
 
+import co.touchlab.kermit.Logger
 import com.gurpreetsk.oofmrlinus.repository.model.Rants
 import kotlinx.serialization.json.Json
 import oofmrlinus.shared.generated.resources.Res
@@ -20,7 +21,7 @@ internal class RantsFileReader(
         val fileAsString = Res.readBytes("files/oofs.json").decodeToString()
         json.decodeFromString<Rants>(fileAsString).rants
     } catch (e: Exception) {
-        e.printStackTrace()
+        Logger.e(e) { "Can't read rants file." }
         emptyList()
     }
 }
