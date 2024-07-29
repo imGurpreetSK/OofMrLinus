@@ -1,6 +1,6 @@
-package com.gurpreetsk.oofmrlinus.repository
+package com.gurpreetsk.oofmrlinus.home.repository
 
-import com.gurpreetsk.oofmrlinus.repository.internal.FileReader
+import com.gurpreetsk.oofmrlinus.home.repository.internal.FileReader
 import com.gurpreetsk.oofmrlinus.repository.model.Rant
 
 interface RantsRepository {

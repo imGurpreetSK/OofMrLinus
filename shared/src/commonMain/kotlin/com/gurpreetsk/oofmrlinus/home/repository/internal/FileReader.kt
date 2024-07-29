@@ -1,4 +1,4 @@
-package com.gurpreetsk.oofmrlinus.repository.internal
+package com.gurpreetsk.oofmrlinus.home.repository.internal
 
 import com.gurpreetsk.oofmrlinus.repository.model.Rants
 import kotlinx.serialization.json.Json
@@ -20,6 +20,7 @@ internal class RantsFileReader(
         val fileAsString = Res.readBytes("files/oofs.json").decodeToString()
         json.decodeFromString<Rants>(fileAsString).rants
     } catch (e: Exception) {
+        e.printStackTrace()
         emptyList()
     }
 }

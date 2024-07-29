@@ -1,5 +1,7 @@
 package com.gurpreetsk.oofmrlinus.repository
 
+import com.gurpreetsk.oofmrlinus.home.repository.FileBackedRantsRepository
+import com.gurpreetsk.oofmrlinus.home.repository.RantsRepository
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertContains
