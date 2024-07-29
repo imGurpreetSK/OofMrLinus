@@ -21,6 +21,15 @@ internal class FileBackedRantsRepositoryTest {
     }
 
     @Test
+    fun `fetching random rant succeeds - empty data set`() = runTest {
+        val repository: RantsRepository = FileBackedRantsRepository { emptyList() }
+
+        val value = repository.getRandom()
+
+        assertIs<IllegalStateException>(value.exceptionOrNull())
+    }
+
+    @Test
     fun `fetching random rant succeeds - single item in data set`() = runTest {
         val repository: RantsRepository = FileBackedRantsRepository {
             listOf("Some sharp comment.")
