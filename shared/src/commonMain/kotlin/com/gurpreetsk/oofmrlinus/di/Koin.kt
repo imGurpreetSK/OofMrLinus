@@ -5,6 +5,10 @@ import com.gurpreetsk.oofmrlinus.data.KtorMuseumApi
 import com.gurpreetsk.oofmrlinus.data.MuseumApi
 import com.gurpreetsk.oofmrlinus.data.MuseumRepository
 import com.gurpreetsk.oofmrlinus.data.MuseumStorage
+import com.gurpreetsk.oofmrlinus.home.HomeScreenViewModel
+import com.gurpreetsk.oofmrlinus.home.repository.FileBackedRantsRepository
+import com.gurpreetsk.oofmrlinus.home.repository.RantsRepository
+import com.gurpreetsk.oofmrlinus.home.repository.internal.RantsFileReader
 import com.gurpreetsk.oofmrlinus.screens.detail.DetailScreenModel
 import com.gurpreetsk.oofmrlinus.screens.list.ListScreenModel
 import io.ktor.client.HttpClient
@@ -34,11 +38,17 @@ val dataModule = module {
             initialize()
         }
     }
+
+    single<RantsRepository> {
+        val json = Json { ignoreUnknownKeys = true }
+        FileBackedRantsRepository(RantsFileReader(json))
+    }
 }
 
 val screenModelsModule = module {
     factoryOf(::ListScreenModel)
     factoryOf(::DetailScreenModel)
+    factoryOf(::HomeScreenViewModel)
 }
 
 fun initKoin() {
