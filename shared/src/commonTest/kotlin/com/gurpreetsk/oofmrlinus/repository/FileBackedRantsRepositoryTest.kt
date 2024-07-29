@@ -12,7 +12,7 @@ import kotlin.test.assertIs
 internal class FileBackedRantsRepositoryTest {
 
     @Test
-    fun `fetching random rant fails - empty data set`() = runTest {
+    fun `fetching random rant fails - file unavailable`() = runTest {
         val repository: RantsRepository = FileBackedRantsRepository { throw IllegalStateException("File absent.") }
 
         val value = repository.getRandom()

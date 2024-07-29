@@ -11,8 +11,13 @@ internal class FileBackedRantsRepository(
     private val reader: FileReader
 ) : RantsRepository {
 
+    private val rants = mutableListOf<Rant>()
+
     override suspend fun getRandom(): Result<Rant> = try {
-        Result.success(reader.read().random())
+        if (rants.isEmpty()) {
+            rants.addAll(reader.read())
+        }
+        Result.success(rants.random())
     } catch (e: Exception) {
         Result.failure(IllegalStateException("Empty data set."))
     }
