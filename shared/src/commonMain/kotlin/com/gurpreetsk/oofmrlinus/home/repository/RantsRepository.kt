@@ -1,10 +1,13 @@
 package com.gurpreetsk.oofmrlinus.home.repository
 
+import co.touchlab.kermit.Logger
 import com.gurpreetsk.oofmrlinus.home.repository.internal.FileReader
 import com.gurpreetsk.oofmrlinus.repository.model.Rant
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 interface RantsRepository {
-    suspend fun getRandom(): Result<Rant>
+    fun getRandom(): Flow<Rant>
 }
 
 internal class FileBackedRantsRepository(
@@ -13,12 +16,15 @@ internal class FileBackedRantsRepository(
 
     private val rants = mutableListOf<Rant>()
 
-    override suspend fun getRandom(): Result<Rant> = try {
-        if (rants.isEmpty()) {
-            rants.addAll(reader.read())
+    override fun getRandom(): Flow<Rant> = flow {
+        try {
+            if (rants.isEmpty()) {
+                rants.addAll(reader.read())
+            }
+            emit(rants.random())
+        } catch (e: Exception) {
+            Logger.e(e.toString(), e)
+            throw e
         }
-        Result.success(rants.random())
-    } catch (e: Exception) {
-        Result.failure(IllegalStateException("Empty data set."))
     }
 }

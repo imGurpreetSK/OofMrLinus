@@ -1,7 +1,6 @@
-package com.gurpreetsk.oofmrlinus.repository
+package com.gurpreetsk.oofmrlinus.home.repository
 
-import com.gurpreetsk.oofmrlinus.home.repository.FileBackedRantsRepository
-import com.gurpreetsk.oofmrlinus.home.repository.RantsRepository
+import app.cash.turbine.test
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertContains
@@ -15,18 +14,18 @@ internal class FileBackedRantsRepositoryTest {
     fun `fetching random rant fails - file unavailable`() = runTest {
         val repository: RantsRepository = FileBackedRantsRepository { throw IllegalStateException("File absent.") }
 
-        val value = repository.getRandom()
-
-        assertIs<IllegalStateException>(value.exceptionOrNull())
+        repository.getRandom().test {
+            assertIs<IllegalStateException>(awaitError())
+        }
     }
 
     @Test
     fun `fetching random rant succeeds - empty data set`() = runTest {
         val repository: RantsRepository = FileBackedRantsRepository { emptyList() }
 
-        val value = repository.getRandom()
-
-        assertIs<IllegalStateException>(value.exceptionOrNull())
+        repository.getRandom().test {
+            assertIs<NoSuchElementException>(awaitError())
+        }
     }
 
     @Test
@@ -35,10 +34,11 @@ internal class FileBackedRantsRepositoryTest {
             listOf("Some sharp comment.")
         }
 
-        val value = repository.getRandom()
-
-        val expected = Result.success("Some sharp comment.")
-        assertEquals(expected, value)
+        repository.getRandom().test {
+            val expected = "Some sharp comment."
+            assertEquals(expected, awaitItem())
+            awaitComplete()
+        }
     }
 
     @Test
@@ -46,8 +46,9 @@ internal class FileBackedRantsRepositoryTest {
         val rants = listOf("Some sharp comment 1.", "Some sharp comment 2.", "Some sharp comment 3.")
         val repository: RantsRepository = FileBackedRantsRepository { rants }
 
-        val value = repository.getRandom()
-
-        assertContains(rants, value.getOrNull())
+        repository.getRandom().test {
+            assertContains(rants, awaitItem())
+            awaitComplete()
+        }
     }
 }
