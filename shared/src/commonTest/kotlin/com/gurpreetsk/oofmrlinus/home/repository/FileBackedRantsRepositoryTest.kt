@@ -12,20 +12,21 @@ internal class FileBackedRantsRepositoryTest {
 
     @Test
     fun `fetching random rant fails - file unavailable`() = runTest {
-        val repository: RantsRepository = FileBackedRantsRepository { throw IllegalStateException("File absent.") }
+        val exception = IllegalStateException("File absent.")
+        val repository: RantsRepository = FileBackedRantsRepository { throw exception }
 
-        repository.getRandom().test {
-            assertIs<IllegalStateException>(awaitError())
-        }
+        val result = repository.getRandom()
+
+        assertEquals(result, Result.failure(exception))
     }
 
     @Test
     fun `fetching random rant succeeds - empty data set`() = runTest {
         val repository: RantsRepository = FileBackedRantsRepository { emptyList() }
 
-        repository.getRandom().test {
-            assertIs<NoSuchElementException>(awaitError())
-        }
+        val result = repository.getRandom()
+
+        assertIs<NoSuchElementException>(result.exceptionOrNull())
     }
 
     @Test
@@ -34,11 +35,10 @@ internal class FileBackedRantsRepositoryTest {
             listOf("Some sharp comment.")
         }
 
-        repository.getRandom().test {
-            val expected = "Some sharp comment."
-            assertEquals(expected, awaitItem())
-            awaitComplete()
-        }
+        val result = repository.getRandom()
+
+        val expected = "Some sharp comment."
+        assertEquals(result, Result.success(expected))
     }
 
     @Test
@@ -46,9 +46,8 @@ internal class FileBackedRantsRepositoryTest {
         val rants = listOf("Some sharp comment 1.", "Some sharp comment 2.", "Some sharp comment 3.")
         val repository: RantsRepository = FileBackedRantsRepository { rants }
 
-        repository.getRandom().test {
-            assertContains(rants, awaitItem())
-            awaitComplete()
-        }
+        val result = repository.getRandom()
+
+        assertContains(rants, result.getOrNull())
     }
 }

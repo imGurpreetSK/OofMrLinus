@@ -14,16 +14,15 @@ import kotlin.test.assertEquals
 
 internal class HomeScreenViewModelTest {
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `get random rant successfully`() = runTest(UnconfinedTestDispatcher()) {
+    fun `get random rant successfully`() = runTest {
         val expectedRant = "Some rant here please."
         val repository = FakeRantsRepository().also { it.rant = expectedRant }
         val viewModel = HomeScreenViewModel(repository)
 
-        viewModel.models.test {
+        viewModel.getRandomRant()
+        viewModel.rant.test {
             assertEquals(expectedRant, awaitItem())
-            awaitComplete()
         }
     }
 
@@ -33,9 +32,9 @@ internal class HomeScreenViewModelTest {
         val repository = FakeRantsRepository().also { it.error = error }
         val viewModel = HomeScreenViewModel(repository)
 
-        viewModel.models.test {
-            assertEquals("", awaitItem())
-            awaitComplete()
+        viewModel.getRandomRant()
+        viewModel.rant.test {
+            expectNoEvents()
         }
     }
 
@@ -44,12 +43,10 @@ internal class HomeScreenViewModelTest {
         var rant: Rant? = null
         var error: Throwable = IllegalStateException("No rants available")
 
-        override fun getRandom(): Flow<Rant> = flow {
-            if (rant == null) {
-                throw error
-            } else {
-                emit(rant!!)
-            }
+        override suspend fun getRandom(): Result<Rant> = if (rant == null) {
+            Result.failure(error)
+        } else {
+            Result.success(rant!!)
         }
     }
 }

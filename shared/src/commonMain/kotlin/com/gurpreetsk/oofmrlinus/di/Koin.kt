@@ -1,5 +1,7 @@
 package com.gurpreetsk.oofmrlinus.di
 
+import com.gurpreetsk.oofmrlinus.base.DefaultDispatchersProvider
+import com.gurpreetsk.oofmrlinus.base.DispatchersProvider
 import com.gurpreetsk.oofmrlinus.data.InMemoryMuseumStorage
 import com.gurpreetsk.oofmrlinus.data.KtorMuseumApi
 import com.gurpreetsk.oofmrlinus.data.MuseumApi
@@ -45,6 +47,10 @@ val dataModule = module {
     }
 }
 
+val utilsModule = module {
+    single<DispatchersProvider> { DefaultDispatchersProvider() }
+}
+
 val screenModelsModule = module {
     factoryOf(::ListScreenModel)
     factoryOf(::DetailScreenModel)
@@ -55,6 +61,7 @@ fun initKoin() {
     startKoin {
         modules(
             dataModule,
+            utilsModule,
             screenModelsModule,
         )
     }

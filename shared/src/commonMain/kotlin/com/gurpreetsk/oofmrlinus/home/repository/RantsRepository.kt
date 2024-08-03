@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 interface RantsRepository {
-    fun getRandom(): Flow<Rant>
+    suspend fun getRandom(): Result<Rant>
 }
 
 internal class FileBackedRantsRepository(
@@ -16,15 +16,18 @@ internal class FileBackedRantsRepository(
 
     private val rants = mutableListOf<Rant>()
 
-    override fun getRandom(): Flow<Rant> = flow {
-        try {
-            if (rants.isEmpty()) {
-                rants.addAll(reader.read())
-            }
-            emit(rants.random())
-        } catch (e: Exception) {
-            Logger.e(e.toString(), e)
-            throw e
+    override suspend fun getRandom(): Result<Rant> = try {
+        if (rants.isEmpty()) {
+            rants.addAll(reader.read())
         }
+
+        if (rants.isEmpty()) {
+            Result.failure(NoSuchElementException())
+        } else {
+            Result.success(rants.random())
+        }
+    } catch (e: Exception) {
+        Logger.e(e.toString(), e)
+        Result.failure(e)
     }
 }
