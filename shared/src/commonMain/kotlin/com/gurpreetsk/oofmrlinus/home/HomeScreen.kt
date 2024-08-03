@@ -5,45 +5,36 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.gurpreetsk.oofmrlinus.repository.model.Rant
+import co.touchlab.kermit.Logger
+import com.gurpreetsk.oofmrlinus.base.State
 import com.gurpreetsk.oofmrlinus.screens.EmptyScreenContent
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 
-data object HomeScreen : Screen {
+internal data object HomeScreen : Screen {
+
+    private val requests: Flow<GetRandomRant?> = MutableStateFlow(null)
 
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel: HomeScreenViewModel = getScreenModel()
 
-        // TODO(gs) - maintain state in view model.
-        var state: Result<Rant>? by remember { mutableStateOf(null) }
-        LaunchedEffect(key1 = Unit) {
-            state = viewModel.getRandomRant()
-        }
+        val state by viewModel.models.collectAsState("")
 
-        if (state == null) {
-            EmptyScreenContent(Modifier.fillMaxSize())
-        } else {
-            if (state!!.isFailure) {
-                EmptyScreenContent(Modifier.fillMaxSize())
-            } else {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Text(state!!.getOrDefault(""))
-                }
-            }
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Text(state)
         }
     }
 }

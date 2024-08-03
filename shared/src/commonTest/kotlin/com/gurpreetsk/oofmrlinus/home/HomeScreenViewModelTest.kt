@@ -1,63 +1,54 @@
 package com.gurpreetsk.oofmrlinus.home
 
+import app.cash.turbine.test
 import com.gurpreetsk.oofmrlinus.home.repository.RantsRepository
 import com.gurpreetsk.oofmrlinus.repository.model.Rant
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.test.TestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 internal class HomeScreenViewModelTest {
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `get random rant successfully`() = runTest {
+    fun `get random rant successfully`() = runTest(UnconfinedTestDispatcher()) {
         val expectedRant = "Some rant here please."
         val repository = FakeRantsRepository().also { it.rant = expectedRant }
         val viewModel = HomeScreenViewModel(repository)
 
-        val randomRant = viewModel.getRandomRant()
-
-        assertEquals(randomRant, Result.success(expectedRant))
+        viewModel.models.test {
+            assertEquals(expectedRant, awaitItem())
+            awaitComplete()
+        }
     }
 
     @Test
-    fun `return failure if getting random rant fails`() = runTest {
-        val repository = FakeRantsRepository()
+    fun `return empty string if getting random rant fails`() = runTest {
+        val error = IllegalStateException()
+        val repository = FakeRantsRepository().also { it.error = error }
         val viewModel = HomeScreenViewModel(repository)
 
-        val result = viewModel.getRandomRant()
-
-        assertTrue(result.isFailure)
+        viewModel.models.test {
+            assertEquals("", awaitItem())
+            awaitComplete()
+        }
     }
 
-    @Test
-    fun `retry if getting random rant fails`() = runTest {
-        val repository = FakeRantsRepository(recoversFromError = true)
-        val viewModel = HomeScreenViewModel(repository)
-
-        val result = viewModel.getRandomRant()
-
-        assertEquals(result, Result.success("Rant"))
-    }
-
-    private class FakeRantsRepository(
-        private val recoversFromError: Boolean = false
-    ) : RantsRepository {
+    private class FakeRantsRepository : RantsRepository {
 
         var rant: Rant? = null
-        private var invocationCount = 0
+        var error: Throwable = IllegalStateException("No rants available")
 
-        override suspend fun getRandom(): Result<Rant> {
-            if (recoversFromError && invocationCount > 0) {
-                return Result.success("Rant")
-            }
-
-            return if (rant == null) {
-                Result.failure(IllegalStateException("No rants available"))
+        override fun getRandom(): Flow<Rant> = flow {
+            if (rant == null) {
+                throw error
             } else {
-                Result.success(rant!!)
-            }.also {
-                invocationCount++
+                emit(rant!!)
             }
         }
     }

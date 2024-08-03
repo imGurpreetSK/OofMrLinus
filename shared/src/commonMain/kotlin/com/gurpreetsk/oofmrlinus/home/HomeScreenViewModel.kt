@@ -1,23 +1,34 @@
 package com.gurpreetsk.oofmrlinus.home
 
 import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
+import co.touchlab.kermit.Logger
+import com.gurpreetsk.oofmrlinus.base.DispatchersProvider
+import com.gurpreetsk.oofmrlinus.base.State
 import com.gurpreetsk.oofmrlinus.home.repository.RantsRepository
 import com.gurpreetsk.oofmrlinus.repository.model.Rant
-
-private const val RETRY_THRESHOLD = 3
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.retry
+import kotlinx.coroutines.flow.stateIn
 
 internal class HomeScreenViewModel(
-    private val repository: RantsRepository
+    repository: RantsRepository,
 ) : ScreenModel {
 
-    suspend fun getRandomRant(): Result<Rant> {
-        var retryCount = 0
-        var result = repository.getRandom()
-        while (result.isFailure && retryCount < RETRY_THRESHOLD) {
-            result = repository.getRandom()
-            retryCount++
+    val models: Flow<Rant> = repository
+        .getRandom()
+        .retry(3)
+        .catch {
+            Logger.e(it.message.orEmpty(), it)
+            emit("")
         }
-        
-        return result
-    }
 }
