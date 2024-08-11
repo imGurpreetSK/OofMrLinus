@@ -36,31 +36,33 @@ internal class HomeScreenViewModel(
 
     fun post(event: HomeEvent) {
         when (event) {
-            HomeEvent.GetRant -> {
-                screenModelScope.launch {
-                    val rant = getRandomRant()
-                    val hasError = rant == null
-                    _state.update {
-                        if (hasError) {
-                            HomeModel(null, RantNotFoundException)
-                        } else {
-                            HomeModel(rant)
-                        }
-                    }
-                }
-            }
+            HomeEvent.GetRant -> getRandomRant()
         }
     }
 
-    private suspend fun getRandomRant(): Rant? {
-        repeat(3) {
-            val result = repository.getRandom()
-            if (result.isSuccess) {
-                return result.getOrThrow()
+    private fun getRandomRant() {
+        suspend fun getRandomRant(): Rant? {
+            repeat(3) {
+                val result = repository.getRandom()
+                if (result.isSuccess) {
+                    return result.getOrThrow()
+                }
             }
+
+            return null
         }
 
-        return null
+        screenModelScope.launch {
+            val rant = getRandomRant()
+            val hasError = rant == null
+            _state.update {
+                if (hasError) {
+                    HomeModel(null, RantNotFoundException)
+                } else {
+                    HomeModel(rant)
+                }
+            }
+        }
     }
 
     companion object {
