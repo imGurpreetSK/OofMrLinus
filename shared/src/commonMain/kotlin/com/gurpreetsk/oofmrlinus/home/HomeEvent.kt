@@ -1,3 +1,5 @@
 package com.gurpreetsk.oofmrlinus.home
 
-data object GetRandomRant
+sealed interface HomeEvent {
+    data object GetRant : HomeEvent
+}

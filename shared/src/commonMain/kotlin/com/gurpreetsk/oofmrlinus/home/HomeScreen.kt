@@ -20,24 +20,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import kotlinx.coroutines.flow.MutableSharedFlow
 
 internal data object HomeScreen : Screen {
 
     @Composable
     override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
         val viewModel: HomeScreenViewModel = getScreenModel()
 
-        val state by viewModel.rant.collectAsState("")
+        val state by viewModel.state.collectAsState()
 
-        var fetch by remember { mutableStateOf(true) }
-        LaunchedEffect(key1 = fetch) {
-            if (!fetch) return@LaunchedEffect
-
-            viewModel.getRandomRant()
-                .also { fetch = false }
+        LaunchedEffect(Unit) {
+            viewModel.post(HomeEvent.GetRant)
         }
 
         val scrollState = rememberScrollState()
@@ -47,10 +41,12 @@ internal data object HomeScreen : Screen {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
-                .clickable(interactionSource, null) { fetch = true }
+                .clickable(interactionSource, null) {
+                    viewModel.post(HomeEvent.GetRant)
+                }
         ) {
             Text(
-                text = state,
+                text = state.rant ?: state.error?.message ?: "",
                 modifier = Modifier.verticalScroll(scrollState)
             )
         }

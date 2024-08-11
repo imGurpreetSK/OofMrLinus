@@ -2,11 +2,16 @@ package com.gurpreetsk.oofmrlinus.base
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 
 interface DispatchersProvider {
-    fun io(): CoroutineDispatcher
+    val io: CoroutineDispatcher
+    val main: CoroutineDispatcher
+    val default: CoroutineDispatcher
 }
 
 internal class DefaultDispatchersProvider : DispatchersProvider {
-    override fun io(): CoroutineDispatcher = Dispatchers.Default
+    override val io: CoroutineDispatcher = Dispatchers.IO
+    override val main: CoroutineDispatcher = Dispatchers.Main
+    override val default: CoroutineDispatcher = Dispatchers.Default
 }
